@@ -2,14 +2,13 @@ import java.util.Arrays;
 
 public class Day2 {
     public static void main(String[] args) {
-        System.out.println("SafeReports=" + getNumberOfSafeReports());
-        System.out.println("SafeReportsWithDampener=" + getNumberOfSafeReportsWithDampener());
+        String[] reports = getInput().split("\\n");
+        System.out.println("SafeReports=" + getNumberOfSafeReports(reports));
+        System.out.println("SafeReportsWithDampener=" + getNumberOfSafeReportsWithDampener(reports));
     }
 
-    private static int getNumberOfSafeReports() {
+    private static int getNumberOfSafeReports(String[] reports) {
         int safeReports = 0;
-        String[] reports = getInput().split("\\n");
-
         for (String report : reports) {
             Integer[] levels = Arrays.stream(report.split(" ")).map(Integer::parseInt).toArray(Integer[]::new);
             if (isReportSafe(levels, -1))
@@ -20,10 +19,8 @@ public class Day2 {
         return safeReports;
     }
 
-    private static int getNumberOfSafeReportsWithDampener() {
+    private static int getNumberOfSafeReportsWithDampener(String[] reports) {
         int safeReports = 0;
-        String[] reports = getInput().split("\\n");
-
         for (String report : reports) {
             Integer[] levels = Arrays.stream(report.split(" ")).map(Integer::parseInt).toArray(Integer[]::new);
             for (int i=-1; i<levels.length; i++)
@@ -41,7 +38,7 @@ public class Day2 {
     private static boolean isReportSafe(Integer[] report, int indexToOmit) {
         boolean isDecreasing = getIsDecreasing(report, indexToOmit);
         int lastIndex = indexToOmit != 0 ? 0 : 1;
-        int lastLevel = indexToOmit != 0 ? report[lastIndex] : report[lastIndex];
+        int lastLevel = report[lastIndex];
         for (int i=lastIndex+1; i<report.length; i++)
         {
             if (i == indexToOmit) {
@@ -73,12 +70,9 @@ public class Day2 {
 
     private static boolean isLevelPairValid(int prev, int curr, boolean isDecreasing) {
         int diff = Math.abs(prev - curr);
-        if ((diff < 1 || diff > 3)
-                || (prev < curr && isDecreasing)
-                || (prev > curr && !isDecreasing)) {
-            return false;
-        }
-        return true;
+        return (diff >= 1 && diff <= 3)
+                && (prev >= curr || !isDecreasing)
+                && (prev <= curr || isDecreasing);
     }
 
     private static String getInput() {
